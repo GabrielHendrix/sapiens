@@ -53,6 +53,7 @@ Sapiens offers a comprehensive suite for human-centric vision tasks (e.g., 2D po
   <img src="./assets/04.gif" alt="04" title="04" width="400"/>
 </p>
 
+Sapiens2 is out! Please checkout: https://github.com/facebookresearch/sapiens2
 
 ## 🚀 Getting Started
 
