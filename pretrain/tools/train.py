@@ -159,14 +159,17 @@ def main():
     # Set the train batch size to be read dataset class
     os.environ['TRAIN_BATCH_SIZE_PER_GPU'] = str(cfg.train_dataloader.batch_size)
 
-    # build the runner from config
-    if 'runner_type' not in cfg:
-        # build the default runner
-        runner = Runner.from_cfg(cfg)
-    else:
-        # build customized runner from the registry
-        # if 'runner_type' is set in the cfg
-        runner = RUNNERS.build(cfg)
+   # # build the runner from config
+    # if 'runner_type' not in cfg:
+    #     # build the default runner
+    #     runner = Runner.from_cfg(cfg)
+    # else:
+    #     # build customized runner from the registry
+    #     # if 'runner_type' is set in the cfg
+    #     runner = RUNNERS.build(cfg)
+
+    cfg.resume = False  # ADICIONE ESTA LINHA AQUI
+    runner = Runner.from_cfg(cfg)
 
     # start training
     runner.train()

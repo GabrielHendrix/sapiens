@@ -20,10 +20,10 @@ image_size=1024
 vis_every_iters=100
 save_every_epochs=5
 
-model_name = 'sapiens_0.3b'; embed_dim=1024; num_layers=24
+# model_name = 'sapiens_0.3b'; embed_dim=1024; num_layers=24
 # model_name = 'sapiens_0.6b'; embed_dim=1280; num_layers=32
 # model_name = 'sapiens_1b'; embed_dim=1536; num_layers=40
-# model_name = 'sapiens_2b'; embed_dim=1920; num_layers=48
+model_name = 'sapiens_2b'; embed_dim=1920; num_layers=48
 # model_name = 'sapiens_4b'; embed_dim=2432; num_layers=56
 # model_name = 'sapiens_8b'; embed_dim=3264; num_layers=64
 
@@ -63,7 +63,7 @@ train_dataloader = dict(
 ##----------------------------------------------------------------------
 # model settings
 model = dict(
-    backbone=dict(type='MAEViT', arch=model_name, patch_size=patch_size, img_size=image_size, final_norm=True),
+    backbone=dict(type='MAEViT', arch=model_name, patch_size=patch_size, img_size=image_size, final_norm=True, mask_ratio=0.75),
     neck=dict(
         type='MAEPretrainDecoder',
         embed_dim=embed_dim,
@@ -152,3 +152,51 @@ env_cfg = dict(
     # set distributed parameters
     dist_cfg=dict(backend='nccl'),
 )
+
+## for dummy testing
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='Resize',
+        scale=image_size,
+        interpolation='bicubic',
+        backend='pillow'),
+    dict(type='PackInputs'),
+]
+
+
+test_dataloader = dict(
+   batch_size=512,
+    num_workers=8,
+   dataset=dict(
+       type='CustomDataset', # <--- Usa pasta genérica de imagens
+       data_root='/dados/hendrix/dataset/train/person/mulher.jpg', # <--- Certifique-se que suas 10 imagens estão aqui
+       pipeline=test_pipeline
+   ),
+   persistent_workers=True,
+)
+
+
+# train_pipeline = [
+#     dict(type='LoadImageFromFile'),
+#     dict(
+#         type='RandomResizedCrop',
+#         scale=image_size,
+#         crop_ratio_range=(0.2, 1.0),
+#         backend='pillow',
+#         interpolation='bicubic'),
+#     dict(type='RandomFlip', prob=0.5),
+#     dict(type='PackInputs')
+# ]
+
+# train_dataloader = dict(
+#     batch_size=512,
+#     num_workers=8,
+#     persistent_workers=True,
+#     sampler=dict(type='DefaultSampler', shuffle=True),
+#     collate_fn=dict(type='default_collate'),
+#     dataset=dict(
+#         type='ImageNet',
+#         data_root='data/imagenet/',
+#         split='train',
+#         pipeline=train_pipeline))
